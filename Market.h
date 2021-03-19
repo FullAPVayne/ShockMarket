@@ -9,6 +9,8 @@
 #define string std::string
 #define vector std::vector
 #define normal std::normal_distribution
+#define tuple std::tuple
+
 
 // struct to contain necessary info about a single normal distribution
 struct distributionParams
@@ -34,6 +36,45 @@ struct marketEvent
 {
     string name;
     float influence;
+};
+
+class EmissionModel
+{
+    // Consists of the characters for three gaussians
+    public:
+
+        EmissionModel(tuple<float,float> lG,
+                        tuple<float,float> mG,
+                        tuple<float,float> rG);
+        EmissionModel(tuple<float,float> lG,
+                        tuple<float,float> mG,
+                        tuple<float,float> rG,
+                        float lW,
+                        float mW,
+                        float rW);
+
+        tuple<float,float> leftGaussian;
+        tuple<float,float> middleGaussian;
+        tuple<float,float> rightGaussian;
+    
+        float leftWeight;
+        float middleWeight;
+        float rightWeight;
+        
+        void set_Gaussian(string specificy, tuple<float,float> newParam);
+        void set_GaussianValue(string specGauss,string specValue,float val);
+        void change_GaussianValue(string specGauss,string specValue,float dVal);
+        
+        float get_emission();
+};
+
+class CEO
+{
+    public:
+        CEO();
+        string name;
+        string personality;
+        float reputation;
 };
 
 class GrowthModel
@@ -80,4 +121,15 @@ class GrowthModel
         
         float transitionTendency;
     
+};
+
+class Company
+{
+    public:
+        string industry;
+        CEO mCEO;
+        int employes;
+        int locations;
+        int availableStocks;
+        GrowthModel growthModel;
 };

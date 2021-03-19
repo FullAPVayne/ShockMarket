@@ -1,8 +1,5 @@
 #include "Market.h"
 
-#define string std::string
-
-
 GaussianMixtureDistribution::GaussianMixtureDistribution(vector<float> K, vector<distributionParams> params)
     {
         float m;
@@ -17,6 +14,118 @@ GaussianMixtureDistribution::GaussianMixtureDistribution(vector<float> K, vector
             this->distributions.push_back(d); 
         }
     }
+
+EmissionModel::EmissionModel(tuple<float,float> lG,
+                        tuple<float,float> mG,
+                        tuple<float,float> rG)
+{
+    leftGaussian = lG;
+    middleGaussian = mG;
+    rightGaussian = rG;
+
+    leftWeight = 0.33;
+    middleWeight = 0.33;
+    rightWeight = 0.33;
+}
+
+EmissionModel::EmissionModel(tuple<float,float> lG,
+                        tuple<float,float> mG,
+                        tuple<float,float> rG,
+                        float lW,
+                        float mW,
+                        float rW)
+{
+    leftGaussian = lG;
+    middleGaussian = mG;
+    rightGaussian = rG;
+
+    leftWeight = lW;
+    middleWeight = mW;
+    rightWeight = rW;
+}
+
+void EmissionModel::set_Gaussian(string specGauss, tuple<float,float> newParam)
+{
+    if (specGauss.compare("l") == 0)
+    {
+        leftGaussian = newParam;
+    }
+    else if (specGauss.compare("m") == 0)
+    {
+        middleGaussian = newParam;
+    }
+    else if (specGauss.compare("r") == 0)
+    {
+        rightGaussian = newParam;
+    }
+    else
+    {
+        std::cout << "No Match!" << std::endl;
+    }
+}
+
+void EmissionModel::set_GaussianValue(string specGauss,string specValue,float val)
+{
+    if (specGauss.compare("l") == 0)
+    {
+        if (specValue.compare("mean") == 0) {std::get<0>(leftGaussian) = val;}
+        else if (specValue.compare("std") == 0) {std::get<1>(leftGaussian) = val;}
+        else {std::cout << "specValue has no match!" << std::endl;}
+    }
+    else if (specGauss.compare("m") == 0)
+    {
+        if (specValue.compare("mean") == 0) {std::get<0>(middleGaussian) = val;}
+        else if (specValue.compare("std") == 0) {std::get<1>(middleGaussian) = val;}
+        else {std::cout << "specValue has no match!" << std::endl;}
+    }
+    else if (specGauss.compare("r") == 0)
+    {
+        if (specValue.compare("mean") == 0) {std::get<0>(rightGaussian) = val;}
+        else if (specValue.compare("std") == 0) {std::get<1>(rightGaussian) = val;}
+        else {std::cout << "specValue has no match!" << std::endl;}
+    }
+    else
+    {
+        std::cout << "No Match!" << std::endl;
+    }
+}
+
+void EmissionModel::change_GaussianValue(string specGauss,string specValue,float dVal)
+{
+    if (specGauss.compare("l") == 0)
+    {
+        if (specValue.compare("mean") == 0) {std::get<0>(leftGaussian) = std::get<0>(leftGaussian)+dVal;}
+        else if (specValue.compare("std") == 0) {std::get<1>(leftGaussian) = std::get<1>(leftGaussian)+dVal;}
+        else {std::cout << "specValue has no match!" << std::endl;}
+    }
+    else if (specGauss.compare("m") == 0)
+    {
+        if (specValue.compare("mean") == 0) {std::get<0>(middleGaussian) = std::get<0>(middleGaussian)+dVal;}
+        else if (specValue.compare("std") == 0) {std::get<1>(middleGaussian) = std::get<1>(middleGaussian)+dVal;}
+        else {std::cout << "specValue has no match!" << std::endl;}
+    }
+    else if (specGauss.compare("r") == 0)
+    {
+        if (specValue.compare("mean") == 0) {std::get<0>(rightGaussian) = std::get<0>(rightGaussian)+dVal;}
+        else if (specValue.compare("std") == 0) {std::get<1>(rightGaussian) = std::get<1>(rightGaussian)+dVal;}
+        else {std::cout << "specValue has no match!" << std::endl;}
+    }
+    else 
+    {
+        std::cout << "No Match!" << std::endl;
+    }
+}
+
+float EmissionModel::get_emission()
+{
+    // figure out what distribution to draw from
+
+    // draw the value 
+
+    // return the value 
+
+}
+
 
 GrowthModel::GrowthModel()
 {
