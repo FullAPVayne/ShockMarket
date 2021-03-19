@@ -5,6 +5,7 @@
 #include "./Eigen/Core"
 #include <random>
 #include <map>
+#include <chrono> 
 
 #define string std::string
 #define vector std::vector

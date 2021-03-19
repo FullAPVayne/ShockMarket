@@ -119,6 +119,41 @@ void EmissionModel::change_GaussianValue(string specGauss,string specValue,float
 float EmissionModel::get_emission()
 {
     // figure out what distribution to draw from
+    // draw random number between 0.0 and 1.0 (inclucive)
+    float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+
+    // create random seed for draw mechanism
+    unsigned seed = chrono::steady_clock::now().time_since_epoch().count();
+    std::default_random_engine e (seed); 
+
+    if (r<leftWeight)
+    {
+        m = std::get<0>(leftGaussian);
+        std = std::get<1>(leftGaussian);
+        // create distribution
+        normal<float> dist(m,std);
+        // draw from distribution
+        return d(e);
+    } 
+    else if )r>=leftWeight && r<(leftWeight+middleWeight))
+    {
+        m = std::get<0>(middleGaussian);
+        std = std::get<1>(middleGaussian);
+        // create distribution
+        normal<float> d(m,std);
+        // draw from distribution
+        return dist(e);
+    }
+    else
+    {
+        m = std::get<0>(middleGaussian);
+        std = std::get<1>(middleGaussian);
+        // create distribution
+        normal<float> d(m,std);
+        // draw from distribution
+        return dist(e);
+    }
+
 
     // draw the value 
 
