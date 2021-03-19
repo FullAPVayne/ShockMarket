@@ -65,34 +65,24 @@ class CEO
         float reputation;
 };
 
-class GrowthState
-{
-    public:
-        string name;
-        
-}
-
 class GrowthModel
 {
     public:
-        // constructors, TODO add constructor that loads from JSON file
         GrowthModel();
-        // GrowthModel(string initialState,
-        //             string hiddenModelName,
-        //             float initialTransitionTendency,
-        //             GaussianMixtureDistribution f,
-        //             GaussianMixtureDistribution s,
-        //             GaussianMixtureDistribution g,
-        //             float thF2S,
-        //             float thS2G);
-        // getter
-        string getState();
-        float getTransitionTendency();
-        float getGrowthRate();
-        // GaussianMixtureDistribution getEmissionProperty(string state);
+        GrowthModel(EmissionModel recessionState,
+                    EmissionModel stagnationState,
+                    EmissionModel growingState,
+                    int startState);
         
+        string getCurrentState();
+        float getInternalValue();
+        float getInternalValueTendency();
+
+        void setInternalValue();
+        void setInternalValueTendency();
         
-        // update function to use to feed events into the growth model and advance it
+        // represents a single time step in which the internalValue is calulated 
+        // and the state emits a growth value
         void update();
         void update(marketEvent event);
 
@@ -100,21 +90,10 @@ class GrowthModel
         void printLog();
 
     private:
-        // identifier for the state the model is in "G", "S" or "F"
-        string state;
-        // name of the underlyinng model
-        string modelName;
-        // Map mapping the State to the relevant distribution info
-        // value between zero and [-1,1] inidcating the tendency to change states
-        // [-1:-0.34] -> tendency towards "falling" state
-        // [-0.33:0.33] -> tendency towards "stagnating" state
-        // [0.34:1] -> tendeny towards "rising" state
-        float thFalling2Stagnation;
-        float thStagnation2Growing;
-        
-        
-        float transitionTendency;
-    
+        float internalValueCurrent
+        float internalValueTendency
+
+
 };
 
 class Company
@@ -122,7 +101,7 @@ class Company
     public:
         string industry;
         CEO mCEO;
-        int employes;
+        int employees;
         int locations;
         int availableStocks;
         GrowthModel growthModel;
