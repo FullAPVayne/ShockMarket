@@ -1,23 +1,8 @@
 #include "Market.h"
 
-GaussianMixtureDistribution::GaussianMixtureDistribution(vector<float> K, vector<distributionParams> params)
-    {
-        float m;
-        float v;
-        normal<float> d;
-        // set up normal distributions
-        for (int i = 0; i<K.size(); i++)
-        {
-            m = params[i].mean;
-            v = params[i].variance;
-            d = normal<float>(m,v);
-            this->distributions.push_back(d); 
-        }
-    }
-
-EmissionModel::EmissionModel(tuple<float,float> lG,
-                        tuple<float,float> mG,
-                        tuple<float,float> rG)
+EmissionModel::EmissionModel(distributionParams lG,
+                        distributionParams mG,
+                        distributionParams rG)
 {
     leftGaussian = lG;
     middleGaussian = mG;
@@ -28,9 +13,9 @@ EmissionModel::EmissionModel(tuple<float,float> lG,
     rightWeight = 0.33;
 }
 
-EmissionModel::EmissionModel(tuple<float,float> lG,
-                        tuple<float,float> mG,
-                        tuple<float,float> rG,
+EmissionModel::EmissionModel(distributionParams lG,
+                        distributionParams mG,
+                        distributionParams rG,
                         float lW,
                         float mW,
                         float rW)
@@ -44,7 +29,7 @@ EmissionModel::EmissionModel(tuple<float,float> lG,
     rightWeight = rW;
 }
 
-void EmissionModel::set_Gaussian(string specGauss, tuple<float,float> newParam)
+void EmissionModel::set_Gaussian(string specGauss, distributionParams newParam)
 {
     if (specGauss.compare("l") == 0)
     {
@@ -68,20 +53,20 @@ void EmissionModel::set_GaussianValue(string specGauss,string specValue,float va
 {
     if (specGauss.compare("l") == 0)
     {
-        if (specValue.compare("mean") == 0) {std::get<0>(leftGaussian) = val;}
-        else if (specValue.compare("std") == 0) {std::get<1>(leftGaussian) = val;}
+        if (specValue.compare("mean") == 0) {leftGaussian.mean = val;}
+        else if (specValue.compare("std") == 0) {leftGaussian.variance = val;}
         else {std::cout << "specValue has no match!" << std::endl;}
     }
     else if (specGauss.compare("m") == 0)
     {
-        if (specValue.compare("mean") == 0) {std::get<0>(middleGaussian) = val;}
-        else if (specValue.compare("std") == 0) {std::get<1>(middleGaussian) = val;}
+        if (specValue.compare("mean") == 0) {leftGaussian.mean = val;}
+        else if (specValue.compare("std") == 0) {leftGaussian.variance = val;}
         else {std::cout << "specValue has no match!" << std::endl;}
     }
     else if (specGauss.compare("r") == 0)
     {
-        if (specValue.compare("mean") == 0) {std::get<0>(rightGaussian) = val;}
-        else if (specValue.compare("std") == 0) {std::get<1>(rightGaussian) = val;}
+        if (specValue.compare("mean") == 0) {leftGaussian.mean = val;}
+        else if (specValue.compare("std") == 0) {leftGaussian.variance = val;}
         else {std::cout << "specValue has no match!" << std::endl;}
     }
     else
@@ -94,20 +79,20 @@ void EmissionModel::change_GaussianValue(string specGauss,string specValue,float
 {
     if (specGauss.compare("l") == 0)
     {
-        if (specValue.compare("mean") == 0) {std::get<0>(leftGaussian) = std::get<0>(leftGaussian)+dVal;}
-        else if (specValue.compare("std") == 0) {std::get<1>(leftGaussian) = std::get<1>(leftGaussian)+dVal;}
+        if (specValue.compare("mean") == 0) {leftGaussian.mean = leftGaussian.mean+dVal;}
+        else if (specValue.compare("std") == 0) {leftGaussian.variance = leftGaussian.variance+dVal;}
         else {std::cout << "specValue has no match!" << std::endl;}
     }
     else if (specGauss.compare("m") == 0)
     {
-        if (specValue.compare("mean") == 0) {std::get<0>(middleGaussian) = std::get<0>(middleGaussian)+dVal;}
-        else if (specValue.compare("std") == 0) {std::get<1>(middleGaussian) = std::get<1>(middleGaussian)+dVal;}
+        if (specValue.compare("mean") == 0) {leftGaussian.mean = leftGaussian.mean+dVal;}
+        else if (specValue.compare("std") == 0) {leftGaussian.variance = leftGaussian.variance+dVal;}
         else {std::cout << "specValue has no match!" << std::endl;}
     }
     else if (specGauss.compare("r") == 0)
     {
-        if (specValue.compare("mean") == 0) {std::get<0>(rightGaussian) = std::get<0>(rightGaussian)+dVal;}
-        else if (specValue.compare("std") == 0) {std::get<1>(rightGaussian) = std::get<1>(rightGaussian)+dVal;}
+        if (specValue.compare("mean") == 0) {leftGaussian.mean = leftGaussian.mean+dVal;}
+        else if (specValue.compare("std") == 0) {leftGaussian.variance = leftGaussian.variance+dVal;}
         else {std::cout << "specValue has no match!" << std::endl;}
     }
     else 
@@ -123,44 +108,40 @@ float EmissionModel::get_emission()
     float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 
     // create random seed for draw mechanism
-    unsigned seed = chrono::steady_clock::now().time_since_epoch().count();
+    unsigned seed = std::chrono::steady_clock::now().time_since_epoch().count();
     std::default_random_engine e (seed); 
+
+    float m;
+    float s;
 
     if (r<leftWeight)
     {
-        m = std::get<0>(leftGaussian);
-        std = std::get<1>(leftGaussian);
+        m = leftGaussian.mean;
+        s = leftGaussian.variance;
         // create distribution
-        normal<float> dist(m,std);
+        normal<float> dist(m,s);
         // draw from distribution
-        return d(e);
+        return dist(e);
     } 
-    else if )r>=leftWeight && r<(leftWeight+middleWeight))
+    else if (r>=leftWeight && r<(leftWeight+middleWeight))
     {
-        m = std::get<0>(middleGaussian);
-        std = std::get<1>(middleGaussian);
+        m = leftGaussian.mean;
+        s = leftGaussian.variance;
         // create distribution
-        normal<float> d(m,std);
+        normal<float> dist(m,s);
         // draw from distribution
         return dist(e);
     }
     else
     {
-        m = std::get<0>(middleGaussian);
-        std = std::get<1>(middleGaussian);
+        m = leftGaussian.mean;
+        s = leftGaussian.variance;
         // create distribution
-        normal<float> d(m,std);
+        normal<float> dist(m,s);
         // draw from distribution
         return dist(e);
     }
-
-
-    // draw the value 
-
-    // return the value 
-
 }
-
 
 GrowthModel::GrowthModel()
 {
@@ -188,33 +169,33 @@ GrowthModel::GrowthModel()
 
 }
 
-GrowthModel::GrowthModel(string initialState,
-                    string hiddenModelName,
-                    float initialTransitionTendency,
-                    GaussianMixtureDistribution f,
-                    GaussianMixtureDistribution s,
-                    GaussianMixtureDistribution g,
-                    float thF2S,
-                    float thS2G)
-{
-    // init hidden model params
-    modelName = hiddenModelName;
-    transitionTendency = initialTransitionTendency;
-    // store emission distribution parameters for this instance
-    emissionProperty.insert(std::pair<string,GaussianMixtureDistribution>("G",g));
-    emissionProperty.insert(std::pair<string,GaussianMixtureDistribution>("S",s));
-    emissionProperty.insert(std::pair<string,GaussianMixtureDistribution>("F",f));  
+// GrowthModel::GrowthModel(string initialState,
+//                     string hiddenModelName,
+//                     float initialTransitionTendency,
+//                     GaussianMixtureDistribution f,
+//                     GaussianMixtureDistribution s,
+//                     GaussianMixtureDistribution g,
+//                     float thF2S,
+//                     float thS2G)
+// {
+//     // init hidden model params
+//     modelName = hiddenModelName;
+//     transitionTendency = initialTransitionTendency;
+//     // store emission distribution parameters for this instance
+//     emissionProperty.insert(std::pair<string,GaussianMixtureDistribution>("G",g));
+//     emissionProperty.insert(std::pair<string,GaussianMixtureDistribution>("S",s));
+//     emissionProperty.insert(std::pair<string,GaussianMixtureDistribution>("F",f));  
     
-    // set transition between states
-    thFalling2Stagnation = thF2S;
-    thStagnation2Growing = thS2G;
+//     // set transition between states
+//     thFalling2Stagnation = thF2S;
+//     thStagnation2Growing = thS2G;
     
-    // set starting state
-    state = initialState;
+//     // set starting state
+//     state = initialState;
 
 
     
-}
+// }
 
         
 void GrowthModel::update(marketEvent event)

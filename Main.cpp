@@ -11,16 +11,16 @@ int main()
     // vector<distributionParams> dP{f,s,g};
     // GaussianMixtureDistribution G(k,dP);
 
-    tuple<float,float> leftGaussian = std::make_tuple(0.f,1.f);
-    tuple<float,float> middleGaussian = std::make_tuple(0.f,2.f);
-    tuple<float,float> rightGaussian = std::make_tuple(10.f,3.f);
+    distributionParams leftGaussian{-1,2}; 
+    distributionParams middleGaussian{0,2};
+    distributionParams rightGaussian{0,2};
+
 
     EmissionModel Test = EmissionModel(leftGaussian,middleGaussian,rightGaussian);
 
-    std::cout << std::get<0>(leftGaussian) << std::endl;
-    std::cout << std::get<1>(leftGaussian) << std::endl;
-    std::cout << std::get<0>(Test.leftGaussian) << std::endl;
-    std::cout << std::get<1>(Test.leftGaussian) << std::endl;
+    std::cout << Test.get_emission() << std::endl;
+
+
 
 }
 
