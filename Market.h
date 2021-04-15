@@ -6,12 +6,22 @@
 #include <random>
 #include <map>
 #include <chrono> 
+//#include "jsoncpp/json/json.h"
 
 #define string std::string
 #define vector std::vector
 #define normal std::normal_distribution
 #define tuple std::tuple
 
+class EmissionModifier
+{
+    
+};
+
+class TransitionModifier
+{
+
+};
 
 // struct to contain necessary info about a single normal distribution
 struct distributionParams
@@ -90,8 +100,8 @@ class GrowthModel
         void printLog();
 
     private:
-        float internalValueCurrent
-        float internalValueTendency
+        float internalValueCurrent;
+        float internalValueTendency;
 
 
 };

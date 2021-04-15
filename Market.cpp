@@ -197,24 +197,18 @@ GrowthModel::GrowthModel()
     
 // }
 
-        
-void GrowthModel::update(marketEvent event)
-{
-    this->transitionTendency = this->transitionTendency+event.influence; 
-}
-
 /*
 GETTER/SETTER
 */
 
-string GrowthModel::getState()
+float GrowthModel::getInternalValue()
 {
-    return this->state;
+    return this->internalValueCurrent;
 }
 
-float GrowthModel::getTransitionTendency()
+float GrowthModel::getInternalValueTendency()
 {
-    return this->transitionTendency;
+    return this->internalValueTendency;
 }
 
 void GrowthModel::printLog()

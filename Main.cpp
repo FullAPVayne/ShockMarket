@@ -15,7 +15,6 @@ int main()
     distributionParams middleGaussian{0,2};
     distributionParams rightGaussian{0,2};
 
-
     EmissionModel Test = EmissionModel(leftGaussian,middleGaussian,rightGaussian);
 
     std::cout << Test.get_emission() << std::endl;
